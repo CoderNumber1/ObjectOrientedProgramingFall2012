@@ -11,12 +11,6 @@ public class MyCD {
     private double principal;
     private double annualRate;
     private int numberOfMonths;
-    
-    public MyCD(double principal, double annualRate, int numberOfMonths){
-        this.principal = principal;
-        this.annualRate = annualRate;
-        this.numberOfMonths = numberOfMonths;
-    }
 
     public double getPrincipal() {
         return principal;
@@ -42,10 +36,10 @@ public class MyCD {
         this.numberOfMonths = numberOfMonths;
     }
     
-    public double GetCDValue(int month){
+    public double GetCDValue(){
         double currentValue = this.principal;
         
-        for(int i = 1; i <= month; i ++){
+        for(int i = 1; i <= this.numberOfMonths; i ++){
             currentValue += (currentValue * this.annualRate / 1200);
         }
         
