@@ -5,3 +5,5 @@
 *.war
 *.ear
 /Quiz02/build/
+/Quiz03/nbproject/private/
+/Quiz03/build/
