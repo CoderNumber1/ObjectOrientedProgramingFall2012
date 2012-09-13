@@ -1,7 +1,7 @@
 
 import java.util.ArrayList;
 
-public class Quiz07 {
+public class Quiz06 {
     public static void main(String[] args){
         ArrayList<Person> people = new ArrayList<>();
         
