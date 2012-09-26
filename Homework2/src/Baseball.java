@@ -1,9 +1,15 @@
 public class Baseball {
     // <editor-fold defaultstate="collapsed" desc="Constructors">
+    public Baseball(){}
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Commands">
     public void StartGame(){
+        this.guessCount = 0;
+        this.balls = 0;
+        this.strikes = 0;
+        this.gameWon = false;
+        
         int[] keys = new int[3];
         
         keys[0] = (int)(Math.random() * (10));
@@ -13,7 +19,7 @@ public class Baseball {
         } while(keys[1] == keys[0]);
         
         do{
-            keys[1] = (int)(Math.random() * (10));
+            keys[2] = (int)(Math.random() * (10));
         } while(keys[2] == keys[0] || keys[2] == keys[1]);
         
         this.key = String.format("%d%d%d", keys[0], keys[1], keys[2]);
@@ -78,9 +84,57 @@ public class Baseball {
         
         return true;
     }
+    
+    public String getGameProgressString(){
+        if(this.gameWon){
+            return String.format("Congratulations!  You are correct!  It took you %d tries.", this.guessCount);
+        }
+        else{
+            return String.format("Strike(s): %d Ball(s): %d", this.strikes, this.balls);
+        }
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Getters and Setters">
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public int getBalls() {
+        return balls;
+    }
+
+    public void setBalls(int balls) {
+        this.balls = balls;
+    }
+
+    public int getStrikes() {
+        return strikes;
+    }
+
+    public void setStrikes(int strikes) {
+        this.strikes = strikes;
+    }
+
+    public boolean isGameWon() {
+        return gameWon;
+    }
+
+    public void setGameWon(boolean gameWon) {
+        this.gameWon = gameWon;
+    }
+
+    public int getGuessCount() {
+        return guessCount;
+    }
+
+    public void setGuessCount(int guessCount) {
+        this.guessCount = guessCount;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Fields">
