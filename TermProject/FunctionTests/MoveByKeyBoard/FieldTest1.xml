@@ -1,0 +1,25 @@
+<field>
+	<size>
+		<height>23</height>
+		<width>23</width>
+	</size>
+	<start>
+		<x>12</x>
+		<y>22</y>
+	<start>
+	<verticalPath>
+		<x>12</x>
+		<yBegin>21</yBegin>
+		<yEnd>16</yEnd>
+	</verticalPath>
+	<horizontalPath>
+		<y>16</y>
+		<xBegin>13</xBegin>
+		<xEnd>18</xEnd>
+	</horizontalPath>
+	<verticalPath>
+		<x>18</x>
+		<yBegin>15</yBegin>
+		<yEnd>0</yEnd>
+	</verticalPath>
+</field>
