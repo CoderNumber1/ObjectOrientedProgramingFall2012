@@ -1,0 +1,58 @@
+<field>
+	<dimensions>
+		<sectionheight>25</sectionheight>
+		<sectionwidth>25</sectionwidth>
+	</dimensions>
+	<size>
+		<height>24</height>
+		<width>24</width>
+	</size>
+	<start>
+		<x>11</x>
+		<y>23</y>
+	<start>
+	<end>
+		<x>13</x>
+		<y>0</y>
+	</end>
+	<paths>
+		<pathset>
+			<orientation>vertical</orientation>
+			<path		xStart="11"		yStart="5" 		xEnd="11"		yEnd="23"/>
+			<path		xStart="13"		yStart="0" 		xEnd="13"		yEnd="5"/>
+			<path		xStart="13"		yStart="7" 		xEnd="13"		yEnd="17"/>
+			<path		xStart="14"		yStart="19"		xEnd="14"		yEnd="22"/>
+			<path		xStart="15"		yStart="1" 		xEnd="15"		yEnd="7"/>
+			<path		xStart="15"		yStart="9" 		xEnd="15"		yEnd="15"/>
+			<path		xStart="17"		yStart="3" 		xEnd="17"		yEnd="7"/>
+			<path		xStart="17"		yStart="11"		xEnd="17"		yEnd="13"/>
+			<path		xStart="18"		yStart="11"		xEnd="18"		yEnd="13"/>
+			<path		xStart="19"		yStart="3" 		xEnd="19"		yEnd="5"/>
+			<path		xStart="19"		yStart="11"		xEnd="19"		yEnd="13"/>
+			<path		xStart="20"		yStart="3" 		xEnd="20"		yEnd="5"/>
+			<path		xStart="21"		yStart="3" 		xEnd="21"		yEnd="5"/>
+			<path		xStart="21"		yStart="11"		xEnd="21"		yEnd="15"/>
+			<path		xStart="23"		yStart="1" 		xEnd="23"		yEnd="7"/>
+			<path		xStart="23"		yStart="9" 		xEnd="23"		yEnd="17"/>
+			<path		xStart="9" 		yStart="11"		xEnd="9" 		yEnd="14"/>
+			<path		xStart="8" 		yStart="21"		xEnd="8" 		yEnd="22"/>
+			<path		xStart="7" 		yStart="5" 		xEnd="7" 		yEnd="11"/>
+			<path		xStart="7" 		yStart="18"		xEnd="7" 		yEnd="20"/>
+			<path		xStart="6" 		yStart="11"		xEnd="6" 		yEnd="14"/>
+			<path		xStart="6" 		yStart="16"		xEnd="6" 		yEnd="20"/>
+			<path		xStart="5" 		yStart="0" 		xEnd="5" 		yEnd="9"/>
+			<path		xStart="4" 		yStart="11"		xEnd="4" 		yEnd="18"/>
+			<path		xStart="4" 		yStart="20"		xEnd="4" 		yEnd="23"/>
+			<path		xStart="2" 		yStart="9" 		xEnd="2" 		yEnd="15"/>
+			<path		xStart="2" 		yStart="17"		xEnd="2" 		yEnd="21"/>
+			<path		xStart="0" 		yStart="0" 		xEnd="0" 		yEnd="3"/>
+			<path		xStart="0" 		yStart="5" 		xEnd="0" 		yEnd="7"/>
+			<path		xStart="0" 		yStart="15"		xEnd="0" 		yEnd="23"/>
+		</pathset>
+		<pathset>
+			<orientation>horizontal</orientation>
+			<path xStart="" yStart="" xEnd="" yEnd=""/>
+			<path xStart="" yStart="" xEnd="" yEnd=""/>
+		</pathset>
+	</paths>
+</field>
