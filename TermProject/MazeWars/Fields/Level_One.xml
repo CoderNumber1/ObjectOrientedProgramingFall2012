@@ -2,7 +2,11 @@
 	<dimensions>
 		<sectionheight>25</sectionheight>
 		<sectionwidth>25</sectionwidth>
+		<tanksize>15</tanksize>
 	</dimensions>
+	<behavior>
+		<tankspeed>1</tankspeed>
+	</behavior>
 	<size>
 		<height>24</height>
 		<width>24</width>
@@ -10,11 +14,34 @@
 	<start>
 		<x>11</x>
 		<y>23</y>
-	<start>
+	</start>
 	<end>
 		<x>13</x>
 		<y>0</y>
 	</end>
+	<weapons>
+		<weapon default="true">
+			<name>cannon</name>
+			<size height="5" width="5" />
+			<speed>2</speed>
+			<damage>5</damage>
+			<weaponlevel>0</weaponlevel>
+		</weapon>
+	</weapons>
+	<aitanks>
+		<tank>
+			<x>13</x>
+			<y>1</y>
+		</tank>
+		<tank>
+			<x>20</x>
+			<y>4</y>
+		</tank>
+		<tank>
+			<x>18</x>
+			<y>12</y>
+		</tank>
+	</aitanks>
 	<paths>
 		<pathset>
 			<orientation>vertical</orientation>
@@ -51,8 +78,39 @@
 		</pathset>
 		<pathset>
 			<orientation>horizontal</orientation>
-			<path xStart="" yStart="" xEnd="" yEnd=""/>
-			<path xStart="" yStart="" xEnd="" yEnd=""/>
+			<path xStart="0" yStart="0" xEnd="5" yEnd="0"/>
+			<path xStart="5" yStart="1" xEnd="13" yEnd="1"/>
+			<path xStart="15" yStart="1" xEnd="23" yEnd="1"/>
+			<path xStart="0" yStart="2" xEnd="3" yEnd="2"/>
+			<path xStart="17" yStart="3" xEnd="21" yEnd="3"/>
+			<!--<path xStart="19" yStart="3" xEnd="21" yEnd="3"/>-->
+			<path xStart="5" yStart="4" xEnd="6" yEnd="4"/>
+			<path xStart="18" yStart="4" xEnd="4" yEnd="21"/>
+			<path xStart="0" yStart="5" xEnd="11" yEnd="5"/>
+			<path xStart="19" yStart="5" xEnd="11" yEnd="21"/>
+			<path xStart="0" yStart="7" xEnd="1" yEnd="7"/>
+			<path xStart="13" yStart="7" xEnd="15" yEnd="7"/>
+			<path xStart="17" yStart="7" xEnd="23" yEnd="7"/>
+			<path xStart="2" yStart="9" xEnd="5" yEnd="9"/>
+			<path xStart="15" yStart="9" xEnd="23" yEnd="23"/>
+			<path xStart="4" yStart="11" xEnd="11" yEnd="11"/>
+			<path xStart="17" yStart="11" xEnd="21" yEnd="11"/>
+			<path xStart="17" yStart="12" xEnd="19" yEnd="12"/>
+			<path xStart="11" yStart="13" xEnd="13" yEnd="13"/>
+			<path xStart="17" yStart="13" xEnd="19" yEnd="13"/>
+			<path xStart="6" yStart="14" xEnd="7" yEnd="14"/>
+			<path xStart="0" yStart="15" xEnd="2" yEnd="15"/>
+			<path xStart="15" yStart="15" xEnd="21" yEnd="15"/>
+			<path xStart="6" yStart="16" xEnd="11" yEnd="16"/>
+			<path xStart="2" yStart="17" xEnd="4" yEnd="17"/>
+			<path xStart="13" yStart="17" xEnd="23" yEnd="17"/>
+			<path xStart="4" yStart="18" xEnd="11" yEnd="18"/>
+			<path xStart="11" yStart="19" xEnd="14" yEnd="19"/>
+			<path xStart="4" yStart="20" xEnd="7" yEnd="20"/>
+			<path xStart="9" yStart="20" xEnd="11" yEnd="20"/>
+			<path xStart="11" yStart="21" xEnd="14" yEnd="21"/>
+			<path xStart="4" yStart="22" xEnd="8" yEnd="22"/>
+			<path xStart="0" yStart="23" xEnd="4" yEnd="23"/>
 		</pathset>
 	</paths>
 </field>

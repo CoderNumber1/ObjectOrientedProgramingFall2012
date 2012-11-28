@@ -9,6 +9,7 @@ public interface GameFigure {
     
     static final int STATE_MOVING = 1;
     static final int STATE_STATIONARY = 2;
+    static final int STATE_EXPLODING = 3;
     
     static final int DIRECTION_LEFT = 0;
     static final int DIRECTION_RIGHT = 1;

@@ -5,15 +5,13 @@ import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
 public class FieldSection extends Rectangle2D.Double implements GameFigure {
-//    int x;
-//    int y;
     boolean isPath;
     
-    public FieldSection(int x, int y, boolean isPath){
+    public FieldSection(int x, int y, int width, int height, boolean isPath){
         this.x = x;
         this.y = y;
-        this.height = GamePanel.SECTION_HEIGHT;
-        this.width = GamePanel.SECTION_WIDTH;
+        this.width = width;
+        this.height = height;
         this.isPath = isPath;
     }
 

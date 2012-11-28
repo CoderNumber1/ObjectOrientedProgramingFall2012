@@ -6,23 +6,21 @@ import java.awt.Toolkit;
 import javax.swing.JPanel;
 
 public class GamePanel extends JPanel {
-    public static final int WIDTH = 600;
-    public static final int HEIGHT = 600;
-    
-    public static final int SECTION_WIDTH = 25;
-    public static final int SECTION_HEIGHT = 25;
+//    public static final int WIDTH = 600;
+//    public static final int HEIGHT = 600;
+//    
+//    public static final int SECTION_WIDTH = 25;
+//    public static final int SECTION_HEIGHT = 25;
     
     private Animator animator;
-    private GameData gameData;
     
     private Graphics graphics;
     private Image dbImage = null;
     
-    public GamePanel(Animator animator, GameData gameData){
+    public GamePanel(Animator animator){
         this.animator = animator;
-        this.gameData = gameData;
         
-        super.setPreferredSize(new Dimension(GamePanel.WIDTH, GamePanel.HEIGHT));
+        super.setPreferredSize(new Dimension(600, 600));
     }
     
     public void startGame(){
@@ -32,7 +30,7 @@ public class GamePanel extends JPanel {
     
     public void gameRender(){
         if(this.dbImage == null){
-            this.dbImage = super.createImage(GamePanel.WIDTH, GamePanel.HEIGHT);
+            this.dbImage = super.createImage(600, 600);
             if (this.dbImage == null) {
                 System.out.println("dbImage is null");
                 return;
@@ -41,39 +39,21 @@ public class GamePanel extends JPanel {
             }
         }
         
-        this.graphics.clearRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
+        this.graphics.clearRect(0, 0, 600, 600);
         
-        synchronized(this.gameData.field){
-            this.gameData.field.render(graphics);
+        synchronized(GameData.getInstance().field){
+            GameData.getInstance().field.render(graphics);
         }
-//        synchronized(this.gameData.field){
-//            for(int x = 0; x < this.gameData.field.field.length; x++){
-//                for(int y = 0; y < this.gameData.field.field[x].length; y++){
-//                    FieldSection section = this.gameData.field.field[x][y];
-//                    
-//                    if(section != null){
-//                        section.render(graphics);
-//                    }
-//                }
-//            }
-//        }
         
-//        synchronized(this.gameData.lines){
-//            for(Line line : this.gameData.lines){
-//                this.graphics.setColor(line.color);
-//                this.graphics.drawLine(line.x1, line.y1, line.x2, line.y2);
-//            }
-//        }
-        
-        if(this.gameData.mode == GameData.MODE_PLAY){
-            synchronized (this.gameData.tank){
-                this.gameData.tank.render(this.graphics);
+        if(GameData.getInstance().mode == GameData.MODE_PLAY){
+            synchronized (GameData.getInstance().tank){
+                GameData.getInstance().tank.render(this.graphics);
             }
 
-            synchronized (this.gameData.figures){
+            synchronized (GameData.getInstance().figures){
                 GameFigure f;
-                for (int i = 0; i < this.gameData.figures.size(); i++) {
-                    f = (GameFigure) this.gameData.figures.get(i);
+                for (int i = 0; i < GameData.getInstance().figures.size(); i++) {
+                    f = (GameFigure) GameData.getInstance().figures.get(i);
                     f.render(this.graphics);
                 }    
             }

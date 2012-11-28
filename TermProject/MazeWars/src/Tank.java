@@ -6,27 +6,21 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 public class Tank extends Rectangle.Double implements GameFigure {
-    static double SIZE = 15.0;
-    Color color;
-    private int state = GameFigure.STATE_STATIONARY;
-    private int direction;
-    private boolean findNearestCell;
-    private int skipMove;
-    private static final int UNIT_TRAVEL_DISTANCE = 1;
-    private final GameData gameData;
+    protected int state = GameFigure.STATE_STATIONARY;
+    protected int direction;
+    protected boolean findNearestCell;
+    protected boolean fireWeapon;
+    protected int skipMove;
+    protected int skipFire;
     
-    public Tank(int x, int y, Color color, GameData gameData){
-        this.gameData = gameData;
-       
-        super.setFrame(x, y, Tank.SIZE, Tank.SIZE);
-        this.color = color;
+    public Tank(){
     }
     
-    public void setStart(Start start){
-        super.setFrame(start.x * GamePanel.SECTION_WIDTH
-                , start.y * GamePanel.SECTION_HEIGHT
-                , Tank.SIZE
-                , Tank.SIZE);
+    public void setStart(Point start){
+        super.setFrame(start.x * GameData.getInstance().field.sectionWidth
+                , start.y * GameData.getInstance().field.sectionHeight
+                , GameData.getInstance().field.tankSize
+                , GameData.getInstance().field.tankSize);
     }
     
     public void move(int direction){
@@ -42,18 +36,23 @@ public class Tank extends Rectangle.Double implements GameFigure {
         this.findNearestCell = true;
     }
     
+    public Image getImage(){
+        return GameResources.getInstance().getPlayerTankImage(this.direction);
+    }
+    
     @Override
     public void render(Graphics g) {
-        Image image = GameResources.getInstance().getPlayerTankImage(this.direction);
+        super.setFrame(x, y, GameData.getInstance().field.tankSize, GameData.getInstance().field.tankSize);
+        Image image = this.getImage();
         
         g.drawImage(image, (int)super.x, (int)super.y, null);
-//        g.setColor(this.color);
-//        g.fillOval((int)super.x, (int)super.y, (int)super.width, (int)super.height);
     }
 
     @Override
     public void update() {
         this.updateLocation();
+        
+        this.updateFireWeapon();
     }
 
     @Override
@@ -70,8 +69,8 @@ public class Tank extends Rectangle.Double implements GameFigure {
         if(this.state == GameFigure.STATE_MOVING){
             Point nextCorner = this.getNextCornerLocation();
             
-            if(this.gameData.field.isMovePossible(nextCorner.x, nextCorner.y, this.direction)){
-                super.setFrame(nextCorner.x, nextCorner.y, Tank.SIZE, Tank.SIZE);
+            if(GameData.getInstance().field.isMovePossible(nextCorner.x, nextCorner.y, this.direction, (int)this.width, (int)this.height)){
+                super.setFrame(nextCorner.x, nextCorner.y, GameData.getInstance().field.tankSize, GameData.getInstance().field.tankSize);
             }
         }
     }
@@ -85,8 +84,8 @@ public class Tank extends Rectangle.Double implements GameFigure {
         }
         
         if(this.findNearestCell){
-            result.x = (int)Math.floor(super.x/GamePanel.SECTION_WIDTH) * GamePanel.SECTION_WIDTH;
-            result.y = (int)Math.floor(super.y/GamePanel.SECTION_HEIGHT) * GamePanel.SECTION_HEIGHT;
+            result.x = (int)Math.floor(super.x/GameData.getInstance().field.sectionWidth) * GameData.getInstance().field.sectionWidth;
+            result.y = (int)Math.floor(super.y/GameData.getInstance().field.sectionHeight) * GameData.getInstance().field.sectionHeight;
             
             this.findNearestCell = false;
             this.skipMove = 5;
@@ -96,19 +95,59 @@ public class Tank extends Rectangle.Double implements GameFigure {
         
         switch(this.direction){
             case GameFigure.DIRECTION_LEFT:
-                result.setLocation((int)super.x - Tank.UNIT_TRAVEL_DISTANCE, (int)super.y);
+                result.setLocation((int)super.x - GameData.getInstance().field.tankSpeed, (int)super.y);
                 break;
             case GameFigure.DIRECTION_RIGHT:
-                result.setLocation((int)super.x + Tank.UNIT_TRAVEL_DISTANCE, (int)super.y);
+                result.setLocation((int)super.x + GameData.getInstance().field.tankSpeed, (int)super.y);
                 break;
             case GameFigure.DIRECTION_FORWARD:
-                result.setLocation((int)super.x, (int)super.y - Tank.UNIT_TRAVEL_DISTANCE);
+                result.setLocation((int)super.x, (int)super.y - GameData.getInstance().field.tankSpeed);
                 break;
             case GameFigure.DIRECTION_BACKWARD:
-                result.setLocation((int)super.x, (int)super.y + Tank.UNIT_TRAVEL_DISTANCE);
+                result.setLocation((int)super.x, (int)super.y + GameData.getInstance().field.tankSpeed);
                 break;
         }
         
         return result;
+    }
+    
+    public void updateFireWeapon(){
+        if(this.fireWeapon && this.skipFire <= 0){
+            int missleX = -1, missleY=-1;
+            
+            switch(this.direction){
+                case GameFigure.DIRECTION_RIGHT:
+                    missleX = (int)(this.x + this.width);
+                    missleY = (int)(this.y + this.height/2);
+                    break;
+                case GameFigure.DIRECTION_LEFT:
+                    missleX = (int)this.x;
+                    missleY = (int)(this.y + this.height/2);
+                    break;
+                case GameFigure.DIRECTION_FORWARD:
+                    missleX = (int)(this.x + this.width/2);
+                    missleY = (int)(this.y);
+                    break;
+                case GameFigure.DIRECTION_BACKWARD:
+                    missleX = (int)(this.x + this.width/2);
+                    missleY = (int)(this.y + this.height);
+                    break;
+            }
+            
+            GameData.getInstance().fireMissle(missleX, missleY, this.direction, null);
+            this.ceaseFire();
+            this.skipFire = 5;
+        }
+        else if(this.fireWeapon){
+            this.skipFire--;
+        }
+    }
+    
+    public void fireWeapon(){
+        this.fireWeapon = true;
+    }
+    
+    public void ceaseFire(){
+        this.fireWeapon = false;
     }
 }

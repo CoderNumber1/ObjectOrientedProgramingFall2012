@@ -1,4 +1,5 @@
 
+import java.awt.Point;
 import java.util.ArrayList;
 import org.w3c.dom.Element;
 
@@ -20,8 +21,24 @@ public class FieldReader extends XMLReader {
         return Integer.parseInt(super.getElementValue("size", "width"));
     }
     
-    public Start getStart(){
-        Start result = new Start();
+    public int getSectionHeight(){
+        return Integer.parseInt(super.getElementValue("dimensions", "sectionheight"));
+    }
+    
+    public int getSectionWidth(){
+        return Integer.parseInt(super.getElementValue("dimensions", "sectionwidth"));
+    }
+    
+    public int getTankSize(){
+        return Integer.parseInt(super.getElementValue("dimensions", "tanksize"));
+    }
+    
+    public int getTankSpeed(){
+        return Integer.parseInt(super.getElementValue("behavior", "tankspeed"));
+    }
+    
+    public Point getStart(){
+        Point result = new Point();
         
         result.x = Integer.parseInt(super.getElementValue("start", "x"));
         result.y = Integer.parseInt(super.getElementValue("start", "y"));
@@ -29,17 +46,32 @@ public class FieldReader extends XMLReader {
         return result;
     }
     
+    public Point getEnd(){
+        Point result = new Point();
+        
+        result.x = Integer.parseInt(super.getElementValue("end", "x"));
+        result.y = Integer.parseInt(super.getElementValue("end", "y"));
+        
+        return result;
+    }
+    
     public ArrayList<HorizontalRun> getHorizontalRuns(){
         ArrayList<HorizontalRun> result = new ArrayList<HorizontalRun>();
         
-        for(Element run : super.getElements("horizontalPath")){
-            HorizontalRun hRun = new HorizontalRun();
+        for(Element set : super.getElements(super.getElements("paths").get(0), new String[]{"pathset"})){
+            ArrayList<Element> paths = super.getElements(set, new String[]{"path"});
             
-            hRun.y = Integer.parseInt(super.getElementValue(run, "y"));
-            hRun.xBegin = Integer.parseInt(super.getElementValue(run, "xBegin"));
-            hRun.xEnd = Integer.parseInt(super.getElementValue(run, "xEnd"));
-            
-            result.add(hRun);
+            if(paths.get(0).getAttribute("yStart").equals(paths.get(0).getAttribute("yEnd"))){
+                for(Element run : paths){
+                    HorizontalRun hRun = new HorizontalRun();
+                    
+                    hRun.y = Integer.parseInt(run.getAttribute("yStart"));
+                    hRun.xBegin = Integer.parseInt(run.getAttribute("xStart"));
+                    hRun.xEnd = Integer.parseInt(run.getAttribute("xEnd"));
+
+                    result.add(hRun);
+                }
+            }
         }
         
         return result;
@@ -48,14 +80,20 @@ public class FieldReader extends XMLReader {
     public ArrayList<VerticalRun> getVerticalRuns(){
         ArrayList<VerticalRun> result = new ArrayList<VerticalRun>();
         
-        for(Element run : super.getElements("verticalPath")){
-            VerticalRun vRun = new VerticalRun();
+        for(Element set : super.getElements(super.getElements("paths").get(0), new String[]{"pathset"})){
+            ArrayList<Element> paths = super.getElements(set, new String[]{"path"});
             
-            vRun.x = Integer.parseInt(super.getElementValue(run, "x"));
-            vRun.yBegin = Integer.parseInt(super.getElementValue(run, "yBegin"));
-            vRun.yEnd = Integer.parseInt(super.getElementValue(run, "yEnd"));
+            if(paths.get(0).getAttribute("xStart").equals(paths.get(0).getAttribute("xEnd"))){
+                for(Element run : paths){
+                    VerticalRun vRun = new VerticalRun();
             
-            result.add(vRun);
+                    vRun.x = Integer.parseInt(run.getAttribute("xStart"));
+                    vRun.yBegin = Integer.parseInt(run.getAttribute("yStart"));
+                    vRun.yEnd = Integer.parseInt(run.getAttribute("yEnd"));
+
+                    result.add(vRun);
+                }
+            }
         }
         
         return result;

@@ -13,57 +13,69 @@ public class Field extends JPanel{
     BufferedImage fieldImage;
     boolean isFieldLoaded;
     
+    public int width;
+    public int height;
+    public int sectionWidth;
+    public int sectionHeight;
+    public int tankSize;
+    public String fieldName;
+    
+    public int tankSpeed;
+    
     public Field(){
-        this.field = new FieldSection[24][24];
-        super.setPreferredSize(new Dimension(GamePanel.WIDTH, GamePanel.HEIGHT));
     }
     
     public void loadField(String fieldName){
-        synchronized(this.field){
+            this.fieldName = fieldName;
             this.reader = new FieldReader(fieldName);
+            this.width = this.reader.getWidth();
+            this.height = this.reader.getHeight();
+            this.field = new FieldSection[this.width][this.height];
+            
+            this.tankSpeed = this.reader.getTankSpeed();
 
-            Start start = reader.getStart();
-            int xStart = GamePanel.SECTION_WIDTH * start.x;
-            int yStart = GamePanel.SECTION_HEIGHT * start.y;
-            this.field[start.x][start.y] = new FieldSection(xStart, yStart, true);
+            this.tankSize = this.reader.getTankSize();
+            this.sectionWidth = this.reader.getSectionWidth();
+            this.sectionHeight = this.reader.getSectionHeight();
+            Point start = reader.getStart();
+            int xStart = this.sectionWidth * start.x;
+            int yStart = this.sectionHeight * start.y;
+            this.field[start.x][start.y] = new FieldSection(xStart, yStart, this.sectionWidth, this.sectionHeight, true);
 
             ArrayList<HorizontalRun> hRuns = reader.getHorizontalRuns();
             for(HorizontalRun run : hRuns){
                 for(int i = run.xBegin; i <= run.xEnd; i++){
-                    int xOffset = GamePanel.SECTION_WIDTH * i;
-                    int yOffset = GamePanel.SECTION_HEIGHT * run.y;
+                    int xOffset = this.sectionWidth * i;
+                    int yOffset = this.sectionHeight * run.y;
 
-                    this.field[i][run.y] = new FieldSection(xOffset, yOffset, true);
+                    this.field[i][run.y] = new FieldSection(xOffset, yOffset, this.sectionWidth, this.sectionHeight, true);
                 }
             }
 
             ArrayList<VerticalRun> vRuns = reader.getVerticalRuns();
             for(VerticalRun run : vRuns){
                 for(int i = run.yBegin; i <= run.yEnd; i++){
-                    int xOffset = GamePanel.SECTION_WIDTH * run.x;
-                    int yOffset = GamePanel.SECTION_HEIGHT * i;
+                    int xOffset = this.sectionWidth * run.x;
+                    int yOffset = this.sectionHeight * i;
 
-                    this.field[run.x][i] = new FieldSection(xOffset, yOffset, true);
+                    this.field[run.x][i] = new FieldSection(xOffset, yOffset, this.sectionWidth, this.sectionHeight, true);
                 }
             }
 
             for(int x = 0; x < this.field.length; x++){
                 for(int y = 0; y < this.field[x].length; y++){
                     if(this.field[x][y] == null){
-                        int xOffset = GamePanel.SECTION_WIDTH * x;
-                        int yOffset = GamePanel.SECTION_HEIGHT * y;
+                        int xOffset = this.sectionWidth * x;
+                        int yOffset = this.sectionHeight * y;
 
-                        this.field[x][y] = new FieldSection(xOffset, yOffset, false);
+                        this.field[x][y] = new FieldSection(xOffset, yOffset, this.sectionWidth, this.sectionHeight, false);
                     }
                 }
             }
-        }
         
-        this.fieldImage = new BufferedImage(GamePanel.WIDTH, GamePanel.HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+        this.fieldImage = new BufferedImage(this.getPixelWidth(), this.getPixelHeight(), BufferedImage.TYPE_4BYTE_ABGR);
         Graphics fieldGraphics = this.fieldImage.createGraphics();
-//        this.fieldImage = super.createImage(GamePanel.WIDTH, GamePanel.HEIGHT);
-//        Graphics fieldGraphics = this.fieldImage.getGraphics();
-        fieldGraphics.clearRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
+        fieldGraphics.clearRect(0, 0, this.getPixelWidth(), this.getPixelHeight());
         
         synchronized(this.field){
             for(int x = 0; x < this.field.length; x++){
@@ -78,6 +90,8 @@ public class Field extends JPanel{
         }
 
         this.isFieldLoaded = true;
+        
+        GameData.getInstance().signalFieldChange(this);
     }
     
     public void render(Graphics g){
@@ -90,17 +104,17 @@ public class Field extends JPanel{
         return this.isFieldLoaded;
     }
     
-    public boolean isMovePossible(int x, int y, int direction){
+    public boolean isMovePossible(int x, int y, int direction, int width, int height){
         boolean movesToWall = false;
         
         int primaryX = -1, primaryY = -1, secondaryX = -1, secondaryY = -1;
         Point primaryPoint = null, secondaryPoint = null;
         int xRight, xLeft, yDown, yUp;
         
-        xRight = x + (int)Tank.SIZE - 1;
-        xLeft = x - (int)Tank.SIZE + 1;
-        yDown = y + (int)Tank.SIZE - 1;
-        yUp = y - (int)Tank.SIZE + 1;
+        xRight = x + width - 1;
+        xLeft = x - width + 1;
+        yDown = y + height - 1;
+        yUp = y - height + 1;
         
         switch(direction){
             case GameFigure.DIRECTION_LEFT:
@@ -108,26 +122,26 @@ public class Field extends JPanel{
                     movesToWall = true;
                 }
                 else{
-                    primaryX = (int)Math.floor((double)x/GamePanel.SECTION_WIDTH);
-                    primaryY = (int)Math.floor((double)y/GamePanel.SECTION_HEIGHT);
+                    primaryX = (int)Math.floor((double)x/this.sectionWidth);
+                    primaryY = (int)Math.floor((double)y/this.sectionHeight);
 
-                    secondaryX = (int)Math.floor((double)x/GamePanel.SECTION_WIDTH);
-                    secondaryY = (int)Math.floor((double)yDown/GamePanel.SECTION_HEIGHT);
+                    secondaryX = (int)Math.floor((double)x/this.sectionWidth);
+                    secondaryY = (int)Math.floor((double)yDown/this.sectionHeight);
                     
                     primaryPoint = new Point(x,y);
                     secondaryPoint = new Point(x, yDown);
                 }
                 break;
             case GameFigure.DIRECTION_RIGHT:
-                if(xRight > GamePanel.WIDTH){
+                if(xRight > this.getPixelWidth()){
                     movesToWall = true;
                 }
                 else{
-                    primaryX = (int)Math.floor((double)xRight/GamePanel.SECTION_WIDTH);
-                    primaryY = (int)Math.floor((double)y/GamePanel.SECTION_HEIGHT);
+                    primaryX = (int)Math.floor((double)xRight/this.sectionWidth);
+                    primaryY = (int)Math.floor((double)y/this.sectionHeight);
 
-                    secondaryX = (int)Math.floor((double)xRight/GamePanel.SECTION_WIDTH);
-                    secondaryY = (int)Math.floor((double)yDown/GamePanel.SECTION_HEIGHT);
+                    secondaryX = (int)Math.floor((double)xRight/this.sectionWidth);
+                    secondaryY = (int)Math.floor((double)yDown/this.sectionHeight);
                     
                     primaryPoint = new Point(xRight,y);
                     secondaryPoint = new Point(xRight, yDown);
@@ -138,26 +152,26 @@ public class Field extends JPanel{
                     movesToWall = true;
                 }
                 else{
-                    primaryX = (int)Math.floor((double)x/GamePanel.SECTION_WIDTH);
-                    primaryY = (int)Math.floor((double)y/GamePanel.SECTION_HEIGHT);
+                    primaryX = (int)Math.floor((double)x/this.sectionWidth);
+                    primaryY = (int)Math.floor((double)y/this.sectionHeight);
 
-                    secondaryX = (int)Math.floor((double)xRight/GamePanel.SECTION_WIDTH);
-                    secondaryY = (int)Math.floor((double)y/GamePanel.SECTION_HEIGHT);
+                    secondaryX = (int)Math.floor((double)xRight/this.sectionWidth);
+                    secondaryY = (int)Math.floor((double)y/this.sectionHeight);
                     
                     primaryPoint = new Point(x,y);
                     secondaryPoint = new Point(xRight, y);
                 }
                 break;
             case GameFigure.DIRECTION_BACKWARD:
-                if(yDown > GamePanel.HEIGHT){
+                if(yDown > this.getPixelHeight()){
                     movesToWall = true;
                 }
                 else{
-                    primaryX = (int)Math.floor((double)x/GamePanel.SECTION_WIDTH);
-                    primaryY = (int)Math.floor((double)yDown/GamePanel.SECTION_HEIGHT);
+                    primaryX = (int)Math.floor((double)x/this.sectionWidth);
+                    primaryY = (int)Math.floor((double)yDown/this.sectionHeight);
 
-                    secondaryX = (int)Math.floor((double)xRight/GamePanel.SECTION_WIDTH);
-                    secondaryY = (int)Math.floor((double)yDown/GamePanel.SECTION_HEIGHT);
+                    secondaryX = (int)Math.floor((double)xRight/this.sectionWidth);
+                    secondaryY = (int)Math.floor((double)yDown/this.sectionHeight);
                     
                     primaryPoint = new Point(x,yDown);
                     secondaryPoint = new Point(xRight, yDown);
@@ -179,7 +193,23 @@ public class Field extends JPanel{
         return !movesToWall;
     }
     
-    public Start getStartPoint(){
+    public Point getStartPoint(){
         return this.reader.getStart();
+    }
+    
+    public Point getEndPoint(){
+        return this.reader.getEnd();
+    }
+    
+    public int getPixelHeight(){
+        return this.height * this.sectionHeight;
+    }
+    
+    public int getPixelWidth(){
+        return this.width * this.sectionWidth;
+    }
+    
+    public FieldReader getFieldReader(){
+        return this.reader;
     }
 }

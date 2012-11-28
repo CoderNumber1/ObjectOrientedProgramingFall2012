@@ -1,0 +1,20 @@
+<fieldanalysis>
+	<pathcollection>
+		<key>
+			<x></x>
+			<y></y>
+		</key>
+		<pathtable>
+			<pathtableentry>
+				<destination>
+					<x></x>
+					<y></y>
+				</destination>
+				<path>
+					<x></x>
+					<y></y>
+				</path>
+			</pathtableentry>
+		</pathtable>
+	</pathcollection>
+</fieldanalysis>
