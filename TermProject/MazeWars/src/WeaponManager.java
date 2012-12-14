@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import org.w3c.dom.Element;
 
-public class WeaponManager implements FieldObserver, Iterable<WeaponTypeIterator> {
+public class WeaponManager implements FieldObserver, Iterable<WeaponManager.WeaponType> {
     private static final WeaponManager _INSTANCE = new WeaponManager();
     private ArrayList<WeaponType> weaponTypes;
     

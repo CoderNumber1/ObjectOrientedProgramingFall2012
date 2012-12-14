@@ -6,8 +6,9 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.JPanel;
+import org.w3c.dom.Element;
 
-public class Field extends JPanel{
+public class Field extends JPanel implements GameFigure{
     FieldSection field[][];
     private FieldReader reader;
     BufferedImage fieldImage;
@@ -193,6 +194,39 @@ public class Field extends JPanel{
         return !movesToWall;
     }
     
+    public boolean isPointInWall(Point point, boolean cellLocation){
+        return this.isPointInWall(point.x, point.y, cellLocation);
+    }
+    public boolean isPointInWall(double x, double y, boolean cellLocation){
+        int cellX, cellY;
+        
+        if(!cellLocation){
+            cellX = (int)Math.floor((double)x/this.sectionWidth);
+            cellY = (int)Math.floor((double)y/this.sectionHeight);
+        }
+        else{
+            cellX = (int)x;
+            cellY = (int)y;
+        }
+        
+        FieldSection cell = null;
+        try{
+            cell = this.field[cellX][cellY];
+        }
+        catch(Exception e){
+            if(true){
+                
+            }
+        }
+        
+        if(!cellLocation){
+            return cell.contains(x, y) && !cell.isPath;
+        }
+        else{
+            return !cell.isPath;
+        }
+    }
+    
     public Point getStartPoint(){
         return this.reader.getStart();
     }
@@ -211,5 +245,69 @@ public class Field extends JPanel{
     
     public FieldReader getFieldReader(){
         return this.reader;
+    }
+    
+    public Point getCellLocation(Point point){
+        return this.getCellLocation(point.x, point.y);
+    }
+    public Point getCellLocation(double x, double y){
+        int cellX = (int)Math.floor((double)x/this.sectionWidth);
+        int cellY = (int)Math.floor((double)y/this.sectionHeight);
+        
+        return new Point(cellX, cellY);
+    }
+    
+    public Point getCellCorner(int x, int y){
+        Point result = new Point();
+        
+        result.x = x * this.sectionWidth;
+        result.y = y * this.sectionHeight;
+        
+        return result;
+    }
+    
+    public Point getCellCenter(int x, int y){
+        Point corner = this.getCellCorner(x, y);
+        
+        corner.x += this.sectionWidth / 2;
+        corner.y += this.sectionHeight / 2;
+        
+        return corner;
+    }
+    
+    public ArrayList<AITank> getAITanks(){
+        ArrayList<AITank> result = new ArrayList<AITank>();
+        
+        for(Element tank : this.reader.getElements("aitanks", "tank")){
+            String strategyName = reader.getElementValue(tank, "strategy");
+            AITank aiTank = new AITank();
+            AIStrategy strategy = new AIStrategy(aiTank, strategyName, GameData.getInstance().pathManager, GameData.getInstance().strategyManager);
+            aiTank.setStrategy(strategy);
+            Point startPoint = new Point();
+            
+            startPoint.x = Integer.parseInt(this.reader.getElementValue(tank, "x"));
+            startPoint.y = Integer.parseInt(this.reader.getElementValue(tank, "y"));
+            
+            aiTank.setStart(startPoint);
+            
+            result.add(aiTank);
+        }
+        
+        return result;
+    }
+
+    @Override
+    public void update() {
+        
+    }
+
+    @Override
+    public int getState() {
+        return GameFigure.STATE_STATIONARY;
+    }
+
+    @Override
+    public int getDirection() {
+        return GameFigure.DIRECTION_FORWARD;
     }
 }

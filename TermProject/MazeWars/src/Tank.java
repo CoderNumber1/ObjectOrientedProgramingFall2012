@@ -12,15 +12,22 @@ public class Tank extends Rectangle.Double implements GameFigure {
     protected boolean fireWeapon;
     protected int skipMove;
     protected int skipFire;
+    protected Point startPoint;
+    protected int sheilds = 100;
     
     public Tank(){
     }
     
     public void setStart(Point start){
+        this.startPoint = start;
         super.setFrame(start.x * GameData.getInstance().field.sectionWidth
                 , start.y * GameData.getInstance().field.sectionHeight
                 , GameData.getInstance().field.tankSize
                 , GameData.getInstance().field.tankSize);
+    }
+    
+    public Point getStart(){
+        return this.startPoint;
     }
     
     public void move(int direction){
@@ -42,17 +49,21 @@ public class Tank extends Rectangle.Double implements GameFigure {
     
     @Override
     public void render(Graphics g) {
-        super.setFrame(x, y, GameData.getInstance().field.tankSize, GameData.getInstance().field.tankSize);
-        Image image = this.getImage();
-        
-        g.drawImage(image, (int)super.x, (int)super.y, null);
+        if(this.state != GameFigure.STATE_EXPLODING){
+            super.setFrame(x, y, GameData.getInstance().field.tankSize, GameData.getInstance().field.tankSize);
+            Image image = this.getImage();
+
+            g.drawImage(image, (int)super.x, (int)super.y, null);
+        }
     }
 
     @Override
     public void update() {
-        this.updateLocation();
-        
-        this.updateFireWeapon();
+        if(this.state != GameFigure.STATE_EXPLODING){
+            this.updateLocation();
+
+            this.updateFireWeapon();
+        }
     }
 
     @Override
@@ -73,6 +84,16 @@ public class Tank extends Rectangle.Double implements GameFigure {
                 super.setFrame(nextCorner.x, nextCorner.y, GameData.getInstance().field.tankSize, GameData.getInstance().field.tankSize);
             }
         }
+    }
+    
+    public Point getCurrentCellLocation(){
+        Point result = new Point();
+        Point center = this.getCenter();
+        
+        result.x = (int)Math.floor(center.x/GameData.getInstance().field.sectionWidth);
+        result.y = (int)Math.floor(center.y/GameData.getInstance().field.sectionHeight);
+        
+        return result;
     }
     
     public Point getNextCornerLocation(){
@@ -143,11 +164,28 @@ public class Tank extends Rectangle.Double implements GameFigure {
         }
     }
     
+    public Point getCenter(){
+        Point result = new Point((int)super.x, (int)super.y);
+        
+        result.x += (int)(this.width/2);
+        result.y += (int)(this.height/2);
+        
+        return result;
+    }
+    
     public void fireWeapon(){
         this.fireWeapon = true;
     }
     
     public void ceaseFire(){
         this.fireWeapon = false;
+    }
+    
+    public void doDamage(int damage){
+        this.sheilds -= damage;
+        
+        if(this.sheilds <= 0){
+            this.state = GameFigure.STATE_EXPLODING;
+        }
     }
 }

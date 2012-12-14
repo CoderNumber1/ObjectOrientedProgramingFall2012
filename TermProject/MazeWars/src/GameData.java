@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class GameData implements FieldWatcherSubject {
+public class GameData implements FieldWatcherSubject, Iterable<GameFigure> {
     private static final GameData _INSTANCE = new GameData();
     public static final int MODE_PLAY = 1;
     public static final int MODE_LOAD = 2;
+    public static final int MODE_WON = 3;
+    public static final int MODE_LOST = 4;
     
     int mode;
     
@@ -17,6 +19,7 @@ public class GameData implements FieldWatcherSubject {
     final List<Line> lines;
     final Field field;
     AIPathManager pathManager;
+    AIStrategyManager strategyManager;
     boolean fieldLoaded;
     
     private ArrayList<FieldObserver> fieldObservers;
@@ -26,8 +29,10 @@ public class GameData implements FieldWatcherSubject {
     }
     private GameData(){
         this.pathManager = new AIPathManager();
+        this.strategyManager = new AIStrategyManager();
         this.fieldObservers = new ArrayList<FieldObserver>();
-        this.watchForFieldChange(pathManager);
+        this.watchForFieldChange(this.strategyManager);
+        this.watchForFieldChange(this.pathManager);
         
         this.mode = GameData.MODE_LOAD;
         this.figures = Collections.synchronizedList(new ArrayList<GameFigure>());
@@ -52,7 +57,7 @@ public class GameData implements FieldWatcherSubject {
             
             this.mode = GameData.MODE_PLAY;
         }
-        else{
+        else if(this.mode == GameData.MODE_PLAY){
             synchronized (this.tank){
                 tank.update();
             }
@@ -66,6 +71,30 @@ public class GameData implements FieldWatcherSubject {
                 }
                 figures.removeAll(remove);
             }
+            
+            synchronized(this.tank){
+                if(this.tank.state == GameFigure.STATE_EXPLODING){
+                    this.mode = GameData.MODE_LOST;
+                }
+                else{
+                    synchronized(this.figures){
+                        boolean won = true;
+                        for(Object figure : this.figures){
+                            if(figure instanceof AITank){
+                                AITank tank = (AITank)figure;
+                                
+                                if(tank.state != GameFigure.STATE_EXPLODING){
+                                    won = false;
+                                }
+                            }
+                        }
+                        
+                        if(won){
+                            this.mode = GameData.MODE_WON;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -76,18 +105,51 @@ public class GameData implements FieldWatcherSubject {
 
     @Override
     public void signalFieldChange(Field field) {
-        Point start = field.getStartPoint();
-        AITank ai = new AITank();
-        
-        ai.setStart(start);
-        this.figures.add(ai);
+//        this.strategyManager.analyzeLevel(field.fieldName);
         
         for(FieldObserver observer : this.fieldObservers){
             observer.fieldLoaded(field);
+        }
+        
+        ArrayList<AITank> aiTanks = field.getAITanks();
+        for(AITank tank : aiTanks){
+            this.figures.add(tank);
         }
     }
     
     public void fireMissle(int x, int y, int direction, String weaponName){
         this.figures.add(new Missle(x, y, direction, weaponName));
+    }
+
+    @Override
+    public Iterator<GameFigure> getIterator() {
+        ArrayList<GameFigure> elements = new ArrayList<GameFigure>();
+        
+        elements.add(this.field);
+        elements.add(this.tank);
+        
+        for(Object figure : this.figures){
+            elements.add((GameFigure)figure);
+        }
+        
+        GameFigureIterator result = new GameFigureIterator(elements);
+        
+        return result;
+    }
+    
+    public Iterator<GameFigure> getTankIterator(){
+        ArrayList<GameFigure> elements = new ArrayList<GameFigure>();
+        
+        elements.add(this.tank);
+        
+        for(Object figure : this.figures){
+            if(figure instanceof AITank){
+                elements.add((AITank)figure);
+            }
+        }
+        
+        GameFigureIterator result = new GameFigureIterator(elements);
+        
+        return result;
     }
 }

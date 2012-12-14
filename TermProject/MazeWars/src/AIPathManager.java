@@ -1,5 +1,4 @@
 
-import java.awt.Point;
 import java.util.HashMap;
 import java.util.Stack;
 import org.w3c.dom.Element;

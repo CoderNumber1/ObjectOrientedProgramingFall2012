@@ -41,22 +41,27 @@ public class GamePanel extends JPanel {
         
         this.graphics.clearRect(0, 0, 600, 600);
         
-        synchronized(GameData.getInstance().field){
-            GameData.getInstance().field.render(graphics);
+//        synchronized(GameData.getInstance().field){
+//            GameData.getInstance().field.render(graphics);
+//        }
+        
+        GameData data = GameData.getInstance();
+        int mode = data.mode;
+        if(mode != GameData.MODE_LOAD){
+            Iterator<GameFigure> figureIterator = GameData.getInstance().getIterator();
+            
+            while(figureIterator.hasNext()){
+                GameFigure figure = figureIterator.Next();
+                
+                figure.render(graphics);
+            }
         }
         
-        if(GameData.getInstance().mode == GameData.MODE_PLAY){
-            synchronized (GameData.getInstance().tank){
-                GameData.getInstance().tank.render(this.graphics);
-            }
-
-            synchronized (GameData.getInstance().figures){
-                GameFigure f;
-                for (int i = 0; i < GameData.getInstance().figures.size(); i++) {
-                    f = (GameFigure) GameData.getInstance().figures.get(i);
-                    f.render(this.graphics);
-                }    
-            }
+        if(mode == GameData.MODE_WON){
+            graphics.drawImage(GameResources.getInstance().getWonImage(), data.field.getPixelWidth() / 2 - 100, data.field.getPixelHeight() / 2 - 100, null);
+        }
+        else if(mode == GameData.MODE_LOST){
+            graphics.drawImage(GameResources.getInstance().getLostImage(), data.field.getPixelWidth() / 2 - 100, data.field.getPixelHeight() / 2 - 100, null);
         }
     }
     

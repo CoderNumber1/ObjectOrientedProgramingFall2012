@@ -8,6 +8,7 @@ public class Missle implements GameFigure {
     private int y;
     private int direction;
     private int state;
+    private Point startCell;
     private WeaponManager.WeaponType weaponType;
     
     public Missle(int x, int y, int direction, String weaponName){
@@ -15,6 +16,8 @@ public class Missle implements GameFigure {
         this.y = y;
         this.direction = direction;
         this.state = GameFigure.STATE_MOVING;
+        
+        this.startCell = GameData.getInstance().field.getCellLocation(x, y);
         
         if(weaponName != null){
             this.weaponType = WeaponManager.getInstance().getWeaponTypeByName(weaponName);
@@ -59,9 +62,30 @@ public class Missle implements GameFigure {
     
     public void updateLocation(){
         if(this.state == GameFigure.STATE_MOVING){
+            Field field = GameData.getInstance().field;
             Point nextCorner = this.getNextCornerLocation();
+            Point nextCell = field.getCellLocation(nextCorner);
+            Point currentCell = field.getCellLocation(this.x, this.y);
             
-            if(GameData.getInstance().field.isMovePossible(nextCorner.x, nextCorner.y, this.direction, this.weaponType.size.width, this.weaponType.size.height)){
+            if(field.isMovePossible(nextCorner.x, nextCorner.y, this.direction, this.weaponType.size.width, this.weaponType.size.height)){
+                if(nextCell.x != this.startCell.x || nextCell.y != this.startCell.y){
+                    Iterator<GameFigure> iterator = GameData.getInstance().getTankIterator();
+                    
+                    boolean hit = false;
+                    while(iterator.hasNext()){
+                        Tank tank = (Tank)iterator.Next();
+                        
+                        Point tankCell = tank.getCurrentCellLocation();
+                        
+                        if(tankCell.x == nextCell.x && tankCell.y == nextCell.y){
+                            hit = true;
+                            tank.doDamage(this.weaponType.damage);
+                        }
+                    }
+                    
+                    this.state = hit ? GameFigure.STATE_EXPLODING : GameFigure.STATE_MOVING;
+                }
+                
                 this.x = nextCorner.x;
                 this.y = nextCorner.y;
 //                super.setFrame(nextCorner.x, nextCorner.y, GameData.getInstance().field.baseMissleRadius * 2, GameData.getInstance().field.baseMissleRadius * 2);

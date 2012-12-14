@@ -1,3 +1,3 @@
 public interface Iterable<T> {
-    public T getIterator();
+    public Iterator<T> getIterator();
 }

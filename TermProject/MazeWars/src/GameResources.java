@@ -8,6 +8,8 @@ import javax.swing.JOptionPane;
 public class GameResources implements FieldObserver {
     private static GameResources instance;
     
+    private Image wonImage;
+    private Image lostImage;
     private Image pathImage;
     private Image wallImage;
     private Image playerTanks[];
@@ -19,6 +21,9 @@ public class GameResources implements FieldObserver {
     private GameResources(){
         String basePath = System.getProperty("user.dir");
         String separator = System.getProperty("file.separator");
+        
+        this.wonImage = GameResources.getImage(basePath + separator + "images" + separator + "YouWon.gif");
+        this.lostImage = GameResources.getImage(basePath + separator + "images" + separator + "YouLost.gif");
         
         this.pathImage = GameResources.getImage(basePath + separator + "images" + separator + "path.png");
         this.wallImage = GameResources.getImage(basePath + separator + "images" + separator + "wall.png");
@@ -47,6 +52,14 @@ public class GameResources implements FieldObserver {
         this.scaledAITanks[GameFigure.DIRECTION_RIGHT] = this.aiTanks[GameFigure.DIRECTION_RIGHT];
         this.scaledAITanks[GameFigure.DIRECTION_FORWARD] = this.aiTanks[GameFigure.DIRECTION_FORWARD];
         this.scaledAITanks[GameFigure.DIRECTION_BACKWARD] = this.aiTanks[GameFigure.DIRECTION_BACKWARD];
+    }
+    
+    public Image getWonImage(){
+        return this.wonImage;
+    }
+    
+    public Image getLostImage(){
+        return this.lostImage;
     }
     
     public Image getPathImage(){

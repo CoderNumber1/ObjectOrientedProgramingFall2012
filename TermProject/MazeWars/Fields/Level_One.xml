@@ -32,14 +32,17 @@
 		<tank>
 			<x>13</x>
 			<y>1</y>
+			<strategy>LineOfSight</strategy>
 		</tank>
 		<tank>
 			<x>20</x>
 			<y>4</y>
+			<strategy>Direct</strategy>
 		</tank>
 		<tank>
 			<x>18</x>
 			<y>12</y>
+			<strategy>Direct</strategy>
 		</tank>
 	</aitanks>
 	<paths>
